@@ -6,7 +6,11 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/eslint-recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "prettier",
+    "prettier/react",
+    "prettier/@typescript-eslint"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -20,7 +24,7 @@
     "ecmaVersion": 11,
     "sourceType": "module"
   },
-  "plugins": [ "react", "@typescript-eslint" ],
+  "plugins": [ "react", "@typescript-eslint", "prettier" ],
   "rules": {
     "react/prop-types": 0,
     "no-unused-vars": 1,
