@@ -1,22 +1,49 @@
-import { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
 import { Box } from '@chakra-ui/react'
+import { QueryClient, useQuery } from 'react-query'
+import { DehydratedState, dehydrate } from 'react-query/hydration'
+import { getConfig, getNowPlaying, getPopular, getTopRated } from '@/queries'
+import AppBar from '@/components/AppBar'
+import MovieGrid from '@/components/MovieGrid'
 
-const Home: FC = () => (
-  <Box>
-    <Head>
-      <title>MovieData</title>
-      {/* <link rel="icon" href="/moon.svg" /> */}
-    </Head>
-  </Box>
-)
+interface HomeProps {
+  dehydratedState: DehydratedState
+}
+
+const Home: FC<HomeProps> = () => {
+  const [page, setPage] = useState(1)
+  const configQuery = useQuery('config', getConfig)
+  const popularQuery = useQuery(['popular', page], () => getPopular(page))
+  const topRatedQuery = useQuery(['top-rated', page], () => getTopRated(page))
+  const nowPlayingQuery = useQuery(['now-playing', page], () => getNowPlaying(page))
+
+  const [view, setView] = useState<'popular' | 'top-rated' | 'now-playing'>('popular')
+  const [data, setData] = useState(popularQuery.data)
+
+  useEffect(() => {
+    if (view === 'popular') popularQuery.data && setData(popularQuery.data)
+    if (view === 'top-rated') topRatedQuery.data && setData(topRatedQuery.data)
+    if (view === 'now-playing') nowPlayingQuery.data && setData(nowPlayingQuery.data)
+  }, [view, popularQuery.data, topRatedQuery, nowPlayingQuery])
+
+  return (
+    <Box>
+      <Head>
+        <title>PoppinMovies</title>
+      </Head>
+      <AppBar setPage={setPage} setView={setView} />
+      <MovieGrid data={data} configQuery={configQuery} />
+    </Box>
+  )
+}
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const res: AxiosResponse<Props> = await axios(
-  //   `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=1h%2C7d%2C30d%2C1y`,
-  // )
-  return { props: { data: '' } }
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery(['popular', 1], () => getPopular(1))
+  await queryClient.prefetchQuery('config', getConfig)
+  return { props: { dehydratedState: dehydrate(queryClient) } }
 }
 
 export default Home
