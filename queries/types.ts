@@ -2,7 +2,7 @@ export interface Result {
   poster_path: string
   adult: boolean
   overview: string
-  release_date: string
+  release_date: Date
   genre_ids: number[]
   id: number
   original_title: string
@@ -59,4 +59,33 @@ export interface MovieData {
   total_pages: number
   total_results: number
   dates?: Dates
+}
+
+export interface MovieDetailsData extends Result {
+  belongs_to_collection: null | Record<string, unknown>
+  budget: number
+  genres: {
+    id: number
+    name: string
+  }[]
+  homepage: string | null
+  imdb_id: string | null
+  production_companies: {
+    id: number
+    logo_path: string | null
+    name: string
+    origin_country: string
+  }[]
+  production_countries: {
+    iso_3166_1: string
+    name: string
+  }[]
+  revenue: number
+  runtime: number | null
+  spoken_languages: {
+    iso_639_1: string
+    name: string
+  }[]
+  status: string
+  tagline: string | null
 }

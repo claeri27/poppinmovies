@@ -35,7 +35,7 @@ const Home: FC<HomeProps> = () => {
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient()
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 5; i++) {
     await queryClient.prefetchQuery(['movies', { page: i, filter: 'popular' }], getMovies)
     await queryClient.prefetchQuery(['movies', { page: i, filter: 'top_rated' }], getMovies)
     await queryClient.prefetchQuery(['movies', { page: i, filter: 'now_playing' }], getMovies)

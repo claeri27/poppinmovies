@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { useQuery } from 'react-query'
 import { Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import { getConfig } from '@/queries'
@@ -18,10 +19,12 @@ export default function MovieGrid({ data, isFetching }: Props) {
     <SimpleGrid columns={[2, null, 3, 4, 5]} spacing={1}>
       {data?.results.map((movie, idx) => (
         <Skeleton isLoaded={!isFetching} key={idx}>
-          <Image
-            _hover={{ transform: `translateY(-1px)`, cursor: 'pointer' }}
-            src={baseUrl + posterSize + movie.poster_path}
-          />
+          <Link href={`/movies/${movie.id}`}>
+            <Image
+              _hover={{ transform: `translateY(-1px)`, cursor: 'pointer' }}
+              src={baseUrl + posterSize + movie.poster_path}
+            />
+          </Link>
         </Skeleton>
       ))}
     </SimpleGrid>
