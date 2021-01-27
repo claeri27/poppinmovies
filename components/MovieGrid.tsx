@@ -1,27 +1,30 @@
 import React from 'react'
-import { Flex, Image } from '@chakra-ui/react'
+import { Box, Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import type { ConfigData, PopularData } from '@/queries/types'
 import type { QueryObserverResult } from 'react-query'
 
 interface Props {
   data: PopularData
   configQuery: QueryObserverResult<ConfigData, unknown>
+  isFetching: boolean
 }
 
-export default function MovieGrid({ data, configQuery }: Props) {
+export default function MovieGrid({ data, configQuery, isFetching }: Props) {
   const baseUrl = configQuery.data.images.base_url
-  const posterSize = 'w185'
+  const posterSize = 'w500'
 
   return (
-    <Flex wrap="wrap" justify="center">
+    <SimpleGrid columns={[2, null, 3, 4, 5]} spacing={1}>
       {data.results.map((movie, idx) => (
-        <Image
-          m="0.5rem"
-          key={idx}
-          _hover={{ transform: `translateY(-3px)`, cursor: 'pointer' }}
-          src={baseUrl + posterSize + movie.poster_path}
-        />
+        <Skeleton isLoaded={!isFetching} key={idx}>
+          <Box>
+            <Image
+              _hover={{ transform: `translateY(-1px)`, cursor: 'pointer' }}
+              src={baseUrl + posterSize + movie.poster_path}
+            />
+          </Box>
+        </Skeleton>
       ))}
-    </Flex>
+    </SimpleGrid>
   )
 }

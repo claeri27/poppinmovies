@@ -6,27 +6,18 @@ import { QueryClient, useQuery } from 'react-query'
 import { DehydratedState, dehydrate } from 'react-query/hydration'
 import { getConfig, getNowPlaying, getPopular, getTopRated } from '@/queries'
 import AppBar from '@/components/AppBar'
-import MovieGrid from '@/components/MovieGrid'
 
-interface HomeProps {
+interface InfoProps {
   dehydratedState: DehydratedState
 }
 
-const Home: FC<HomeProps> = () => {
+const Info: FC<InfoProps> = () => {
   const [page, setPage] = useState(1)
-  const configQuery = useQuery('config', getConfig)
   const topRatedQuery = useQuery(['top-rated', page], () => getTopRated(page))
   const nowPlayingQuery = useQuery(['now-playing', page], () => getNowPlaying(page))
   const popularQuery = useQuery(['popular', page], () => getPopular(page))
 
-  const [data, setData] = useState(popularQuery.data)
   const [view, setView] = useState<'popular' | 'top-rated' | 'now-playing'>('popular')
-
-  useEffect(() => {
-    if (view === 'popular' && popularQuery.data) setData(popularQuery.data)
-    if (view === 'top-rated' && topRatedQuery.data) setData(topRatedQuery.data)
-    if (view === 'now-playing' && nowPlayingQuery.data) setData(nowPlayingQuery.data)
-  }, [view, popularQuery.data, topRatedQuery, nowPlayingQuery])
 
   return (
     <Box>
@@ -34,13 +25,6 @@ const Home: FC<HomeProps> = () => {
         <title>PoppinMovies</title>
       </Head>
       <AppBar setPage={setPage} setView={setView} />
-      <MovieGrid
-        data={data}
-        configQuery={configQuery}
-        isFetching={
-          popularQuery.isFetching || topRatedQuery.isFetching || nowPlayingQuery.isFetching || false
-        }
-      />
     </Box>
   )
 }
@@ -52,4 +36,4 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: { dehydratedState: dehydrate(queryClient) } }
 }
 
-export default Home
+export default Info
