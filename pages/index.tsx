@@ -35,7 +35,11 @@ const Home: FC<HomeProps> = () => {
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['movies', { page: 1, filter: 'popular' }], getMovies)
+  for (let i = 1; i <= 10; i++) {
+    await queryClient.prefetchQuery(['movies', { page: i, filter: 'popular' }], getMovies)
+    await queryClient.prefetchQuery(['movies', { page: i, filter: 'top_rated' }], getMovies)
+    await queryClient.prefetchQuery(['movies', { page: i, filter: 'now_playing' }], getMovies)
+  }
   await queryClient.prefetchQuery('config', getConfig)
   return { props: { dehydratedState: dehydrate(queryClient) } }
 }
