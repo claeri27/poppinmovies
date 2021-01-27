@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
 import { Box } from '@chakra-ui/react'
-import { QueryClient, useQuery } from 'react-query'
+import { QueryClient } from 'react-query'
 import { DehydratedState, dehydrate } from 'react-query/hydration'
-import { getConfig, getNowPlaying, getPopular, getTopRated } from '@/queries'
+import { getConfig } from '@/queries'
 import AppBar from '@/components/AppBar'
 
 interface InfoProps {
@@ -13,25 +13,20 @@ interface InfoProps {
 
 const Info: FC<InfoProps> = () => {
   const [page, setPage] = useState(1)
-  const topRatedQuery = useQuery(['top-rated', page], () => getTopRated(page))
-  const nowPlayingQuery = useQuery(['now-playing', page], () => getNowPlaying(page))
-  const popularQuery = useQuery(['popular', page], () => getPopular(page))
-
-  const [view, setView] = useState<'popular' | 'top-rated' | 'now-playing'>('popular')
+  const [filter, setFilter] = useState<'popular' | 'top_rated' | 'now_playing'>('popular')
 
   return (
     <Box>
       <Head>
         <title>PoppinMovies</title>
       </Head>
-      <AppBar setPage={setPage} setView={setView} />
+      <AppBar setPage={setPage} setFilter={setFilter} />
     </Box>
   )
 }
 
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['popular', 1], () => getPopular(1))
   await queryClient.prefetchQuery('config', getConfig)
   return { props: { dehydratedState: dehydrate(queryClient) } }
 }

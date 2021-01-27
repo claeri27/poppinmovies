@@ -15,13 +15,6 @@ export interface Result {
   vote_average: number
 }
 
-export interface PopularData {
-  page: number
-  results: Result[]
-  total_pages: number
-  total_results: number
-}
-
 export interface LatestData extends Result {
   belongs_to_collection: null
   budget: number
@@ -60,7 +53,10 @@ export interface Dates {
   minimum: Date
 }
 
-export interface TopRatedData extends PopularData {}
-export interface NowPlayingData extends PopularData {
-  dates: Dates
+export interface MovieData {
+  page: number
+  results: Result[]
+  total_pages: number
+  total_results: number
+  dates?: Dates
 }

@@ -1,46 +1,31 @@
-import { Button, Flex, Heading, Input, Text } from '@chakra-ui/react'
+import { Button, Flex, Heading, Input } from '@chakra-ui/react'
 import React from 'react'
 import { useQueryClient } from 'react-query'
 
 interface Props {
   setPage: React.Dispatch<React.SetStateAction<number>>
-  setView: React.Dispatch<React.SetStateAction<'popular' | 'top-rated' | 'now-playing'>>
+  setFilter: React.Dispatch<React.SetStateAction<'popular' | 'top_rated' | 'now_playing'>>
 }
 
-export default function AppBar({ setPage, setView }: Props) {
+export default function AppBar({ setPage, setFilter }: Props) {
   const queryClient = useQueryClient()
+
+  const onClick = (filter: 'popular' | 'top_rated' | 'now_playing') => {
+    setPage(1)
+    setFilter(filter)
+    queryClient.invalidateQueries('movies')
+  }
 
   return (
     <Flex my="1rem" justify="space-between" align="center">
-      <Heading
-        ml="1rem"
-        _hover={{ cursor: 'pointer' }}
-        onClick={() => {
-          setPage(1)
-          setView('popular')
-          queryClient.invalidateQueries('popular')
-        }}>
+      <Heading ml="1rem" _hover={{ cursor: 'pointer' }} onClick={() => onClick('popular')}>
         PoppinMovies
       </Heading>
       <Flex>
-        <Button
-          mr="1rem"
-          minW="7rem"
-          onClick={() => {
-            setPage(1)
-            setView('top-rated')
-            queryClient.invalidateQueries('top-rated')
-          }}>
+        <Button mr="1rem" minW="7rem" onClick={() => onClick('top_rated')}>
           TOP RATED
         </Button>
-        <Button
-          mr="1rem"
-          minW="8rem"
-          onClick={() => {
-            setPage(1)
-            setView('now-playing')
-            queryClient.invalidateQueries('now-playing')
-          }}>
+        <Button mr="1rem" minW="8rem" onClick={() => onClick('now_playing')}>
           NOW PLAYING
         </Button>
         <Button mr="1rem" minW="4rem" onClick={() => setPage(prev => prev + 1)}>
