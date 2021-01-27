@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from 'react-query'
-import { Box, Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
+import { Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import { getConfig } from '@/queries'
 import type { MovieData } from '@/queries/types'
 
@@ -15,17 +15,15 @@ export default function MovieGrid({ data, isFetching }: Props) {
   const posterSize = 'w500'
 
   return (
-    <Skeleton isLoaded={!isFetching}>
-      <SimpleGrid columns={[2, null, 3, 4, 5]} spacing={1}>
-        {data?.results.map((movie, idx) => (
-          <Box key={idx}>
-            <Image
-              _hover={{ transform: `translateY(-1px)`, cursor: 'pointer' }}
-              src={baseUrl + posterSize + movie.poster_path}
-            />
-          </Box>
-        ))}
-      </SimpleGrid>
-    </Skeleton>
+    <SimpleGrid columns={[2, null, 3, 4, 5]} spacing={1}>
+      {data?.results.map((movie, idx) => (
+        <Skeleton isLoaded={!isFetching} key={idx}>
+          <Image
+            _hover={{ transform: `translateY(-1px)`, cursor: 'pointer' }}
+            src={baseUrl + posterSize + movie.poster_path}
+          />
+        </Skeleton>
+      ))}
+    </SimpleGrid>
   )
 }
