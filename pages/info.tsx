@@ -20,7 +20,7 @@ const Info: FC<InfoProps> = () => {
       <Head>
         <title>PoppinMovies</title>
       </Head>
-      <AppBar setPage={setPage} setFilter={setFilter} />
+      {/* <AppBar setPage={setPage} setFilter={setFilter} /> */}
     </Box>
   )
 }

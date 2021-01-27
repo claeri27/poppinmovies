@@ -1,8 +1,8 @@
 import React from 'react'
+import { useQuery } from 'react-query'
 import { Box, Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import { getConfig } from '@/queries'
-import { useQuery } from 'react-query'
-import { MovieData } from '@/queries/types'
+import type { MovieData } from '@/queries/types'
 
 interface Props {
   data: MovieData

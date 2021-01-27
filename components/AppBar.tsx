@@ -1,19 +1,23 @@
-import { Button, Flex, Heading, Input } from '@chakra-ui/react'
 import React from 'react'
-import { useQueryClient } from 'react-query'
+import { useAtom } from 'jotai'
+import { Button, Flex, Heading, Input } from '@chakra-ui/react'
+import { Filter, filterAtom, pageAtom } from '@/atoms'
+import MenuButton from './MenuButton'
+import Pagination from './Pagination'
 
 interface Props {
-  setPage: React.Dispatch<React.SetStateAction<number>>
-  setFilter: React.Dispatch<React.SetStateAction<'popular' | 'top_rated' | 'now_playing'>>
+  isPreviousData?: boolean
 }
 
-export default function AppBar({ setPage, setFilter }: Props) {
-  const queryClient = useQueryClient()
+export default function AppBar({ isPreviousData }: Props) {
+  const [, setPage] = useAtom(pageAtom)
+  const [, setFilter] = useAtom(filterAtom)
 
-  const onClick = (filter: 'popular' | 'top_rated' | 'now_playing') => {
-    setPage(1)
-    setFilter(filter)
-    queryClient.invalidateQueries('movies')
+  const onClick = (filter: Filter) => {
+    if (!isPreviousData) {
+      setPage(1)
+      setFilter(filter)
+    }
   }
 
   return (
@@ -22,15 +26,24 @@ export default function AppBar({ setPage, setFilter }: Props) {
         PoppinMovies
       </Heading>
       <Flex>
-        <Button mr="1rem" minW="7rem" onClick={() => onClick('top_rated')}>
+        <Pagination {...{ isPreviousData }} />
+        <Button
+          mr="1rem"
+          minW="7rem"
+          disabled={isPreviousData}
+          display={['none', null, null, 'flex']}
+          onClick={() => onClick('top_rated')}>
           TOP RATED
         </Button>
-        <Button mr="1rem" minW="8rem" onClick={() => onClick('now_playing')}>
+        <Button
+          mr="1rem"
+          minW="8rem"
+          disabled={isPreviousData}
+          display={['none', null, null, 'flex']}
+          onClick={() => onClick('now_playing')}>
           NOW PLAYING
         </Button>
-        <Button mr="1rem" minW="4rem" onClick={() => setPage(prev => prev + 1)}>
-          NEXT
-        </Button>
+        <MenuButton handleClick={filter => onClick(filter)} />
         <Input mr="1.3rem" />
       </Flex>
     </Flex>
