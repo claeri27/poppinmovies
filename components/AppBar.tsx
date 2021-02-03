@@ -28,18 +28,22 @@ export default function AppBar({ isPreviousData }: Props) {
         ml="1rem"
         _hover={{ cursor: 'pointer' }}
         onClick={() => {
-          if (router.asPath !== '/') router.back()
+          if (router.asPath !== '/') router.push('/')
           else onClick('popular')
         }}>
         PoppinMovies
       </Heading>
       <Flex>
+        <Pagination {...{ isPreviousData }} />
         <Button
           mr="1rem"
           minW="7rem"
           disabled={isPreviousData}
           display={['none', null, null, 'flex']}
-          onClick={() => onClick('top_rated')}>
+          onClick={() => {
+            if (router.asPath !== '/') router.push('/')
+            onClick('top_rated')
+          }}>
           TOP RATED
         </Button>
         <Button
@@ -47,10 +51,12 @@ export default function AppBar({ isPreviousData }: Props) {
           minW="8rem"
           disabled={isPreviousData}
           display={['none', null, null, 'flex']}
-          onClick={() => onClick('now_playing')}>
+          onClick={() => {
+            if (router.asPath !== '/') router.push('/')
+            onClick('now_playing')
+          }}>
           NOW PLAYING
         </Button>
-        <Pagination {...{ isPreviousData }} />
         <MenuButton handleClick={filter => onClick(filter)} />
         {/* <Input mr="1.3rem" /> */}
       </Flex>

@@ -4,6 +4,7 @@ import { useQuery } from 'react-query'
 import { Image, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import { getConfig } from '@/queries'
 import type { MovieData } from '@/queries/types'
+import { Router } from 'next/router'
 
 interface Props {
   data: MovieData
