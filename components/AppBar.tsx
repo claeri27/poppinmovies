@@ -4,7 +4,7 @@ import { Button, Flex, Heading } from '@chakra-ui/react'
 import { Filter, filterAtom, pageAtom } from '@/atoms'
 import MenuButton from './MenuButton'
 import Pagination from './Pagination'
-import { useRouter } from 'next/dist/client/router'
+import { useRouter } from 'next/router'
 
 interface Props {
   isPreviousData?: boolean
@@ -24,15 +24,17 @@ export default function AppBar({ isPreviousData }: Props) {
 
   return (
     <Flex my="1rem" justify="space-between" align="center">
-      <Heading
-        ml="1rem"
-        _hover={{ cursor: 'pointer' }}
-        onClick={() => {
-          if (router.asPath !== '/') router.push('/')
-          else onClick('popular')
-        }}>
-        PoppinMovies
-      </Heading>
+      <Flex align="center" justify="center">
+        <Heading
+          ml="1rem"
+          _hover={{ cursor: 'pointer' }}
+          onClick={() => {
+            if (router.asPath !== '/') router.push('/')
+            else onClick('popular')
+          }}>
+          PoppinMovies
+        </Heading>
+      </Flex>
       <Flex>
         <Pagination {...{ isPreviousData }} />
         <Button

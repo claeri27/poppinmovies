@@ -2,17 +2,7 @@ import React, { FC, useState } from 'react'
 import Head from 'next/head'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
-import {
-  Box,
-  Flex,
-  Image,
-  Text,
-  Skeleton,
-  Heading,
-  IconButton,
-  Fade,
-  ScaleFade,
-} from '@chakra-ui/react'
+import { Box, Flex, Heading, IconButton, Image, ScaleFade, Skeleton, Text } from '@chakra-ui/react'
 import { QueryClient, useQuery } from 'react-query'
 import { DehydratedState, dehydrate } from 'react-query/hydration'
 import { getConfig, getMovieDetails, getMovies } from '@/queries'
@@ -49,29 +39,33 @@ const Info: FC<InfoProps> = () => {
               src={baseUrl + backdropSize + data.backdrop_path}
             />
           )}
-          <Flex position="absolute" w="100%" h="100%">
-            <Flex pl="3rem" justify="center" direction="column" w="70%">
-              <ScaleFade initialScale={0.4} in={!isFetching && imageLoaded}>
-                <Flex direction="column" borderRadius="5%" p="3rem" bg="rgba(24,24,24, .5)">
-                  <Heading>{data?.title}</Heading>
+          <Flex direction="column" position="absolute" w="100%" h="100%">
+            <ScaleFade initialScale={0.4} in={!isFetching && imageLoaded}>
+              <Flex justify="center">
+                <Heading fontSize={['1.5rem', '2.5rem', '3rem', '4rem', '5rem']}>
+                  {data?.title?.toUpperCase()}
+                </Heading>
+              </Flex>
+              <Flex m="4rem">
+                <Flex direction="column" p="3rem" bg="rgba(24,24,24, .5)">
                   <Flex>
-                    <Text>{data?.release_date.slice(0, 4)}</Text>
+                    <Text mr="1rem">{data?.release_date.slice(0, 4)}</Text>
                     {data?.genres.map(genre => (
-                      <Text key={genre.id}>-{genre.name}</Text>
+                      <Text mr="1rem" key={genre.id}>
+                        {genre.name}
+                      </Text>
                     ))}
                   </Flex>
-                  <Text my={['1rem']} fontSize={['.7rem', null, null, '1.2rem']}>
-                    {data?.overview}
-                  </Text>
+                  <Text fontSize={['.7rem', null, null, '1.2rem']}>{data?.overview}</Text>
                   <IconButton
                     size="lg"
                     aria-label="Back button"
                     icon={<ArrowBackIcon color="white" />}
-                    onClick={() => router.back()}
+                    onClick={() => router.push('/')}
                   />
                 </Flex>
-              </ScaleFade>
-            </Flex>
+              </Flex>
+            </ScaleFade>
             {/* <Flex direction="column" w="50%" align="center" justify="center">
               <ScaleFade initialScale={0.4} in={!isFetching && imageLoaded}>
                 <Flex direction="column">
