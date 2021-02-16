@@ -53,7 +53,7 @@ export interface Dates {
   minimum: Date
 }
 
-export interface MovieData {
+export interface Movies {
   page: number
   results: Result[]
   total_pages: number
@@ -61,9 +61,66 @@ export interface MovieData {
   dates?: Dates
 }
 
-export interface MovieDetailsData extends Result {
+export interface CastMember {
+  adult: boolean
+  gender: number
+  id: number
+  known_for_department: string
+  name: string
+  original_name: string
+  popularity: number
+  profile_path: string | null
+  cast_id: number
+  character: string
+  credit_id: string
+  order: number
+}
+
+export interface CrewMember {
+  adult: boolean
+  gender: number
+  id: number
+  known_for_department: string
+  name: string
+  original_name: string
+  popularity: number
+  profile_path: string | null
+  credit_id: string
+  department: string
+  job: string
+}
+
+export interface Credits {
+  id: number
+  cast: CastMember[]
+  crew: CrewMember[]
+}
+
+export interface Reviews {
+  id: number
+  page: number
+  results: {
+    author: string
+    author_details: {
+      name: string
+      username: string
+      avatar_path: string | null
+      rating: number | null
+    }
+    content: string
+    created_at: string
+    id: string
+    updated_at: string
+    url: string
+  }[]
+  total_pages: number
+  total_results: number
+}
+
+export interface Movie extends Result {
   belongs_to_collection: null | Record<string, unknown>
   budget: number
+  credits: Credits
   genres: {
     id: number
     name: string
@@ -81,6 +138,7 @@ export interface MovieDetailsData extends Result {
     name: string
   }[]
   revenue: number
+  reviews: Reviews
   runtime: number | null
   spoken_languages: {
     iso_639_1: string
@@ -88,4 +146,21 @@ export interface MovieDetailsData extends Result {
   }[]
   status: string
   tagline: string | null
+}
+
+export interface Actor {
+  birthday: string | null
+  known_for_department: string
+  deathday: string | null
+  id: number
+  name: string
+  also_known_as: string[]
+  gender: 0 | 1 | 2
+  biography: string
+  popularity: number
+  place_of_birth: string | null
+  profile_path: string | null
+  adult: boolean
+  imdb_id: string
+  homepage: string | null
 }

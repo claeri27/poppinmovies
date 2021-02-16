@@ -1,28 +1,29 @@
 import React, { FC, useState } from 'react'
-import Head from 'next/head'
 import { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { Box, Flex, Heading, IconButton, Image, ScaleFade, Skeleton, Text } from '@chakra-ui/react'
-import { QueryClient, useQuery } from 'react-query'
+import { Box, Fade, Flex, Heading, IconButton, Image, Skeleton, Text } from '@chakra-ui/react'
+import { QueryClient } from 'react-query'
 import { DehydratedState, dehydrate } from 'react-query/hydration'
-import { getConfig, getMovieDetails, getMovies } from '@/queries'
+import { getConfig, getMovie, getMovies } from '@/queries'
 import AppBar from '@/components/AppBar'
-import { MovieData } from '@/queries/types'
+import { Movies } from '@/queries/types'
 import { ArrowBackIcon } from '@chakra-ui/icons'
+import { useConfig, useMovie } from '@/hooks'
 
 interface InfoProps {
   dehydratedState: DehydratedState
 }
 
 const Info: FC<InfoProps> = () => {
-  const router = useRouter()
-
   const [imageLoaded, setImageLoaded] = useState(false)
-  const { data, isFetching } = useQuery(['movie_data', router.query.slug], () =>
-    getMovieDetails(router.query.slug as string),
-  )
-  const configQuery = useQuery('config', getConfig)
-  const baseUrl = configQuery.data?.images.base_url
+
+  const config = useConfig()
+  const router = useRouter()
+  const movie = useMovie()
+
+  const isLoaded = !movie.isFetching && imageLoaded
+  const baseUrl = config.data?.images.base_url
   const backdropSize = 'original'
 
   return (
@@ -31,63 +32,51 @@ const Info: FC<InfoProps> = () => {
         <title>PoppinMovies</title>
       </Head>
       <AppBar />
-      <Skeleton isLoaded={!isFetching && imageLoaded}>
-        <Flex>
-          {data && (
+      <Flex>
+        {movie.data && (
+          <Skeleton isLoaded={imageLoaded}>
             <Image
               onLoad={() => setImageLoaded(true)}
-              src={baseUrl + backdropSize + data.backdrop_path}
+              src={baseUrl + backdropSize + movie.data.backdrop_path}
             />
-          )}
-          <Flex direction="column" position="absolute" w="100%" h="100%">
-            <ScaleFade initialScale={0.4} in={!isFetching && imageLoaded}>
-              <Flex justify="center">
-                <Heading fontSize={['1.5rem', '2.5rem', '3rem', '4rem', '5rem']}>
-                  {data?.title?.toUpperCase()}
-                </Heading>
-              </Flex>
-              <Flex m="4rem">
-                <Flex direction="column" p="3rem" bg="rgba(24,24,24, .5)">
-                  <Flex>
-                    <Text mr="1rem">{data?.release_date.slice(0, 4)}</Text>
-                    {data?.genres.map(genre => (
-                      <Text mr="1rem" key={genre.id}>
-                        {genre.name}
-                      </Text>
-                    ))}
-                  </Flex>
-                  <Text fontSize={['.7rem', null, null, '1.2rem']}>{data?.overview}</Text>
-                  <IconButton
-                    size="lg"
-                    aria-label="Back button"
-                    icon={<ArrowBackIcon color="white" />}
-                    onClick={() => router.push('/')}
-                  />
-                </Flex>
-              </Flex>
-            </ScaleFade>
-            {/* <Flex direction="column" w="50%" align="center" justify="center">
-              <ScaleFade initialScale={0.4} in={!isFetching && imageLoaded}>
-                <Flex direction="column">
-                  {data?.production_companies.map(company => (
-                    <Text key={company.id}>{company.name}</Text>
+          </Skeleton>
+        )}
+        <Flex direction="column" position="absolute" w="100%" h="100%">
+          <Fade in={isLoaded}>
+            <Flex justify="center">
+              <Heading fontSize={['1.5rem', '2.5rem', '3rem', '4rem', '5rem']}>
+                {movie.data?.title.toUpperCase()}
+              </Heading>
+            </Flex>
+            <Flex m="3rem">
+              <Flex w="100%" direction="column" p="3rem" bg="rgba(24,24,24, .5)">
+                <Flex>
+                  <Text mr="1rem">{movie.data?.release_date.slice(0, 4)}</Text>
+                  {movie.data?.genres.map((genre, idx) => (
+                    <Text mr="1rem" key={idx}>
+                      {genre.name}
+                    </Text>
                   ))}
                 </Flex>
-                <Flex>
-                  {data?.production_countries.map((country, idx) => (
-                    <Flex key={idx}>
-                      <Text>{country.name}</Text>
+                <Text fontSize={['.7rem', null, null, '1.2rem']}>{movie.data?.overview}</Text>
+                <Flex overflow="scroll" direction="row">
+                  {movie.data?.credits.cast.slice(0, 6).map((castMember, idx) => (
+                    <Flex m="1rem" direction="column" align="center" justify="center" key={idx}>
+                      <Text>{castMember.name}</Text>
                     </Flex>
                   ))}
                 </Flex>
-                <Text>{data?.homepage}</Text>
-                <Text>{data?.popularity}</Text>
-              </ScaleFade>
-            </Flex> */}
-            {/* <Text>BOBBY</Text> */}
-          </Flex>
+                <IconButton
+                  size="lg"
+                  aria-label="Back button"
+                  icon={<ArrowBackIcon color="white" />}
+                  onClick={() => router.push('/')}
+                />
+              </Flex>
+            </Flex>
+          </Fade>
         </Flex>
-      </Skeleton>
+      </Flex>
     </Box>
   )
 }
@@ -95,7 +84,7 @@ const Info: FC<InfoProps> = () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params
   const queryClient = new QueryClient()
-  queryClient.prefetchQuery(['movie_details', slug], () => getMovieDetails(slug as string))
+  await queryClient.prefetchQuery(['movie', slug], () => getMovie(slug as string))
   await queryClient.prefetchQuery('config', getConfig)
   return { props: { dehydratedState: dehydrate(queryClient) } }
 }
@@ -103,7 +92,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(['movies', { page: 1, filter: 'popular' }], getMovies)
-  const data = await queryClient.getQueryData<MovieData>('movies')
+  const data = queryClient.getQueryData<Movies>('movies')
   return {
     paths: data.results.map(movie => ({ params: { slug: movie.id.toString() } })),
     fallback: true,

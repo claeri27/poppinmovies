@@ -5,15 +5,14 @@ import { Filter, filterAtom, pageAtom } from '@/atoms'
 import MenuButton from './MenuButton'
 import Pagination from './Pagination'
 import { useRouter } from 'next/router'
+import { useMovies } from '@/hooks'
 
-interface Props {
-  isPreviousData?: boolean
-}
-
-export default function AppBar({ isPreviousData }: Props) {
+export default function AppBar() {
   const [, setPage] = useAtom(pageAtom)
   const [, setFilter] = useAtom(filterAtom)
+
   const router = useRouter()
+  const { isPreviousData } = useMovies()
 
   const onClick = (filter: Filter) => {
     if (!isPreviousData) {
