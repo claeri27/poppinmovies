@@ -7,9 +7,9 @@ import { QueryClient } from 'react-query'
 import { DehydratedState, dehydrate } from 'react-query/hydration'
 import { getConfig, getMovie, getMovies } from '@/queries'
 import AppBar from '@/components/AppBar'
-import { Movies } from '@/queries/types'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { useConfig, useMovie } from '@/hooks'
+import type { Movies } from '@/queries/types'
 
 interface InfoProps {
   dehydratedState: DehydratedState
